@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Bundled local Node runtime (platform-specific, ~47MB — not needed in the repo)
+.tooling/
+
+# Vite
+.vite/
+*.local
+
+# macOS
+.DS_Store
