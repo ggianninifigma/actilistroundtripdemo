@@ -10,12 +10,16 @@ export const AVATARS: Record<string, { label: string; className: string }> = {
 // Product catalog — shared by the home screen and the list suggestions.
 export type Product = { name: string; cat: string; image: string };
 
+// Prefix asset paths with Vite's BASE_URL so images resolve both locally ("/")
+// and when the app is served under a subpath (e.g. GitHub Pages: "/actilistroundtripdemo/").
+const asset = (file: string) => `${import.meta.env.BASE_URL}assets/${file}`;
+
 export const catalog: Product[] = [
-  { name: "Avocados", cat: "Produce", image: "/assets/b0bf8.png" },
-  { name: "Whole Milk", cat: "Dairy", image: "/assets/ba737.png" },
-  { name: "Sourdough", cat: "Bakery", image: "/assets/22090.png" },
-  { name: "Dish Soap", cat: "Household", image: "/assets/6e724.png" },
-  { name: "Eggs (12)", cat: "Dairy", image: "/assets/e728f.png" },
+  { name: "Avocados", cat: "Produce", image: asset("b0bf8.png") },
+  { name: "Whole Milk", cat: "Dairy", image: asset("ba737.png") },
+  { name: "Sourdough", cat: "Bakery", image: asset("22090.png") },
+  { name: "Dish Soap", cat: "Household", image: asset("6e724.png") },
+  { name: "Eggs (12)", cat: "Dairy", image: asset("e728f.png") },
 ];
 
 // Recently purchased items shown on the home screen.
