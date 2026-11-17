@@ -19,9 +19,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: actilist
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,14 +30,38 @@ jobs:
           cache: npm
           cache-dependency-path: actilist/package-lock.json
 
-      - name: Install dependencies
+      # --- "After" app (live main) -> served at site root ---
+      - name: Install dependencies (after)
+        working-directory: actilist
         run: npm ci
 
-      - name: Build
+      - name: Build after
+        working-directory: actilist
         # Served from https://<user>.github.io/actilistroundtripdemo/
         env:
           BASE_PATH: /actilistroundtripdemo/
         run: npm run build
+
+      # --- "Before" app (frozen pre-roundtrip copy) -> served at /before/ ---
+      - name: Install dependencies (before)
+        working-directory: pre-roundtrip
+        run: npm ci
+
+      - name: Build before
+        working-directory: pre-roundtrip
+        # Served from https://<user>.github.io/actilistroundtripdemo/before/
+        env:
+          BASE_PATH: /actilistroundtripdemo/before/
+        run: npm run build
+
+      # --- Assemble both builds into one site directory ---
+      - name: Assemble site
+        run: |
+          rm -rf _site
+          mkdir -p _site
+          cp -r actilist/dist/. _site/
+          mkdir -p _site/before
+          cp -r pre-roundtrip/dist/. _site/before/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -51,7 +72,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: actilist/dist
+          path: _site
 
   deploy:
     needs: build
